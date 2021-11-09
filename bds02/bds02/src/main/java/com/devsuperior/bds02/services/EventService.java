@@ -1,5 +1,8 @@
 package com.devsuperior.bds02.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,12 @@ public class EventService {
 
 	@Autowired
 	private EventRepository repository;
+
+	@Transactional(readOnly = true)
+	public List<EventDTO> findAll() {
+		List<Event> list = repository.findAll();
+		return list.stream().map(x -> new EventDTO(x)).collect(Collectors.toList());
+	}
 
 	@Transactional
 	public EventDTO update(Long id, EventDTO dto) {
