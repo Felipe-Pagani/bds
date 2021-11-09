@@ -1,5 +1,6 @@
 package com.devsuperior.bds02.controllers;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +29,18 @@ public class EventControllerIT {
 	
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Test
+	public void findAllShouldReturnAllResourcesSortedByName() throws Exception{
+		ResultActions result = mockMvc.perform(get("/events")
+				.contentType(MediaType.APPLICATION_JSON));
+		
+		result.andExpect(status().isOk());
+		result.andExpect(jsonPath("$[0].name").value("Feira do Software"));
+		result.andExpect(jsonPath("$[1].name").value("CCXP"));
+		result.andExpect(jsonPath("$[2].name").value("Congresso Linux"));
+		result.andExpect(jsonPath("$[3].name").value("Semana Spring React"));
+	}
 	
 	@Test
 	public void updateShouldUpdateResourceWhenIdExists() throws Exception {
