@@ -17,7 +17,6 @@ public class Employee {
 	public Long id;
 	public String name;	
 	public String email;
-	public int idade;
 	
 	@ManyToOne
 	@JoinColumn(name = "department_id")
