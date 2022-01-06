@@ -2,14 +2,22 @@ package com.devsuperior.bds03.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import com.devsuperior.bds03.entities.Employee;
 
 public class EmployeeDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	@NotBlank(message = "Campo requerido!")
 	private String name;
+	@Email(message = "Email Invalido!")
 	private String email;
+	
+	@NotNull(message = "Campo requerido!")
 	private Long departmentId;
 	
 	public EmployeeDTO() {
