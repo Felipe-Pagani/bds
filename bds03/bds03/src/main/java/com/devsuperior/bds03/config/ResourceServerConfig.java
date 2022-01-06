@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 
 @Configuration
 @EnableResourceServer
@@ -18,16 +19,16 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private JwtTokenStore tokenStore;
-	
-	private static final String[] PUBLIC = {"/oauth/token", "/h2-console/**"};
-	
-	private static final String[] OPERATOR_OR_ADMIN = {"/products/**", "/categories/**"};
-	
-	private static final String[] ADMIN = {"/users/**"};
-	
+
+	private static final String[] PUBLIC = { "/oauth/token", "/h2-console/**" };
+
+	private static final String[] OPERATOR_GET = { "/departments/**", "/employees/**" };
+
+	private static final String[] ADMIN = { "/users/**" };
+
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
 		resources.tokenStore(tokenStore);
@@ -35,17 +36,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		
-		//H2 
+
+		// H2
 		if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
 			http.headers().frameOptions().disable();
 		}
-		
-		http.authorizeRequests()
-		.antMatchers(PUBLIC).permitAll()
-		.antMatchers(HttpMethod.GET, OPERATOR_OR_ADMIN).permitAll()
-		.antMatchers(OPERATOR_OR_ADMIN).hasAnyRole("OPERATOR", "ADMIN")
-		.antMatchers(ADMIN).hasRole("ADMIN")
-		.anyRequest().authenticated();
+
+		http.authorizeRequests().antMatchers(PUBLIC).permitAll().antMatchers(HttpMethod.GET, OPERATOR_GET)
+				.hasAnyRole("OPERATOR", "ADMIN").anyRequest().hasAnyRole("ADMIN");
 	}
 }
